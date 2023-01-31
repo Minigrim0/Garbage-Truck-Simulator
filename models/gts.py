@@ -26,7 +26,7 @@ class GarbageTruckSimulator:
             raise RuntimeError("This class is a Singleton!")
         GarbageTruckSimulator.instance = self
 
-        self.screen = Screen.getInstance((1152, 704), "GarbageTruckSimulator", "UI/assets/images/icon.png", False)
+        self.screen = Screen.getInstance((1920, 1080), "GarbageTruckSimulator", "UI/assets/images/icon.png", False)
 
         GameOptions.getInstance()
 
