@@ -72,9 +72,13 @@ class Screen:
     def resize(self, size: tuple):
         """Resizes the screen to the given size"""
         if self.fullScreen:
-            self.display = pygame.display.set_mode(self.fullSize, pygame.locals.FULLSCREEN)
+            self.display = pygame.display.set_mode(
+                self.fullSize,
+                pygame.locals.FULLSCREEN | pygame.locals.HWSURFACE | pygame.locals.DOUBLEBUF | pygame.locals.SCALED
+            )
         else:
-            self.display = pygame.display.set_mode(size)  # , pygame.locals.RESIZABLE)
+            self.display = pygame.display.set_mode(
+                size, pygame.locals.RESIZABLE | pygame.locals.HWSURFACE | pygame.locals.DOUBLEBUF | pygame.locals.SCALED)
 
         taillex = size[0] / self.initial_size[0]
         tailley = size[1] / self.initial_size[1]
