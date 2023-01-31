@@ -1,0 +1,37 @@
+{
+    "categories": [
+        {
+            "name": "Programming",
+            "values": [
+                "Minigrim0"
+            ]
+        },
+        {
+            "name": "Character animations",
+            "values": [
+                "Minigrim0"
+            ]
+        },
+        {
+            "name": "sound effects",
+            "values": [
+                "Minigrim0"
+            ]
+        },
+        {
+            "name": "",
+            "values": [
+                "This game was made using pygame",
+                {
+                    "image": ".meta/pygame.png",
+                    "position": "centered"
+                },
+                "You can contribute to this project on",
+                {
+                    "image": ".meta/github.png"
+                },
+                "https://github.com/Minigrim0/Garbage-Truck-Simulator"
+            ]
+        }
+    ]
+}
