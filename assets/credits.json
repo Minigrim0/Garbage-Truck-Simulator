@@ -19,6 +19,18 @@
             ]
         },
         {
+            "name": "Music",
+            "values": {
+                "Song": "Frantic",
+                "Artist": "lemonmusicstudio",
+                "platform": "Pixabay"
+            },
+            "urls": {
+                "lemonmusicstudio": "https://pixabay.com/users/lemonmusicstudio-14942887/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=15190",
+                "Pixabay": "https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=15190"
+            }
+        },
+        {
             "name": "",
             "values": [
                 "This game was made using pygame",
