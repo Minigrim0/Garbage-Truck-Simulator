@@ -1,10 +1,17 @@
-
+import os
 import time
-import pygame
+import random
+import pygame as pg
+import glob
+from datetime import datetime
 
 from models.game_options import GameOptions
 from src.runnable import Runnable
 from UI.menus.menu import Menu
+from UI.components.button import Button
+
+import logging
+logger = logging.getLogger("[Menu][Main]")
 
 
 class MainMenu(Menu, Runnable):
@@ -15,21 +22,62 @@ class MainMenu(Menu, Runnable):
         self.percussion = (0, None)
         self.total_time = 0
 
-        self.fondMenu = pygame.Surface((1366, 768))
-        self.fondMenu.fill((190, 0, 0))
-        self.timeAtStart = time.time()
-        self.timeAtStartLoop = time.time()
+        self.background: pg.Surface = pg.Surface((1920, 1080))
+        self.images = []
+
+        # To be changed
+        self._Backgrounds: dict = {}
+        self.DrogueTxt: pg.Surface = None
+
         self.PosXDrogue = 1366
-        self.TimeTot = 0
         self.TabExplosions = []
-        pygame.mixer.music.play()
+
+        self._build()
+
+    def _build_buttons(self):
+        self.buttons = {
+            "play": Button((860, 500), (200, 50), callback=self.launch, toLaunch="game"),
+            "options": Button((860, 600), (200, 50), callback=self.launch, toLaunch="options"),
+            "credits": Button((860, 700), (200, 50), callback=self.launch, toLaunch="credits"),
+            "quit": Button((860, 800), (200, 50), callback=self.launch, toLaunch="quit")
+        }
+
+        buttons_font = GameOptions.getInstance().fonts["MedievalSharp-xOZ5"]["40"]
+        self.buttons["play"].build("Play", buttons_font, ("CENTER", "CENTER"))
+        self.buttons["options"].build("Options", buttons_font, ("CENTER", "CENTER"))
+        self.buttons["credits"].build("Credits", buttons_font, ("CENTER", "CENTER"))
+        self.buttons["quit"].build("Quit", buttons_font, ("CENTER", "CENTER"))
 
     def _build(self):
-        for x in range(10):
-            self.TabExplosions.append(
-                Functions.CarCollision(
-                    x * 136, 670, 0, Constants.TabBigExp, 20)
-                )
+        # for x in range(10):
+        #     self.TabExplosions.append(
+        #         Functions.CarCollision(
+        #             x * 136, 670, 0, Constants.TabBigExp, 20)
+        #         )
+
+        self.background.fill((190, 0, 0))
+        self._build_buttons()
+
+        title = GameOptions.getInstance().fonts["MedievalSharp-xOZ5"]["100"].render(
+            "Garbage Truck Simulator®", 1, (0, 0, 0)
+        )
+        self.images.append(
+            ((1920/2 - title.get_size()[0] / 2, 100 - title.get_size()[1] / 2), title)
+        )
+
+        copyright = GameOptions.getInstance().fonts["MedievalSharp-xOZ5"]["20"].render(
+            f"Minigrim0 © 2016 - {datetime.now().year}", 1, (0, 0, 0)
+        )
+        self.images.append(
+            ((1920 - copyright.get_size()[0], 1080 - copyright.get_size()[1]), copyright)
+        )
+
+        warning = GameOptions.getInstance().fonts["MedievalSharp-xOZ5"]["20"].render(
+            "Warning; This game may contain Michael Bay", 1, (0, 0, 0)
+        )
+        self.images.append(
+            ((30, 1080 - warning.get_size()[1]), warning)
+        )
 
     def loop(self):
         super().loop()
@@ -43,72 +91,47 @@ class MainMenu(Menu, Runnable):
 
     def update(self):
         """Updates the menu parts that do not depend on the user input"""
-
-        TimeElapsed = time.time() - timeAtStartLoop
-        timeAtStartLoop = time.time()
-        TimeTot += TimeElapsed
-
-        if TimeTot >= 2.55 and self.percussion[0] == 0:
-            self.percussion = (1, Functions.Percu(20, 297))
-        if TimeTot >= 5.45 and self.percussion[0] == 1:
-            self.percussion = (2, Functions.Percu(20, 297))
-        if TimeTot >= 8.5 and self.percussion[0] == 2:
-            self.percussion = (3, Functions.Percu(20, 297))
+        if self.total_time >= 2.55 and self.percussion[0] == 0:
+            self.percussion = (1, None)  # Functions.Percu(20, 297))
+        if self.total_time >= 5.45 and self.percussion[0] == 1:
+            self.percussion = (2, None)  # Functions.Percu(20, 297))
+        if self.total_time >= 8.5 and self.percussion[0] == 2:
+            self.percussion = (3, None)  # Functions.Percu(20, 297))
 
     def _draw(self):
-        if TimeTot >= 11.7 and TimeTot < 12.2:
-            fondMenu.fill((0, 0, 0))
-            Constants.fenetre.blit(fondMenu, (0, 0))
-        elif TimeTot >= 12.1 and TimeTot <= 23.7:
-            Constants.PlayTxt = Constants.font4.render(
-                "Jouer", 1, (
-                    random.randrange(255),
-                    random.randrange(255),
-                    random.randrange(255))
-                )
-            PosXDrogue -= ((Constants.DrogueTxt.get_size()
-                            [0] + 1375) / 11.6) * TimeElapsed
-            fondMenu.fill((
+        if self.total_time >= 11.7 and self.total_time < 12.2:
+            self.show_buttons = False
+            self.background.fill((0, 0, 0))
+            self.screen.blit(self.background, (0, 0))
+        elif self.total_time >= 12.1 and self.total_time <= 23.7:
+            self.show_buttons = True
+
+            self.background.fill((
                 random.randrange(255),
                 random.randrange(255),
                 random.randrange(255)
                 )
             )
-
-            Constants.fenetre.blit(fondMenu, (0, 0))
-            Constants.fenetre.blit(
-                Constants.BackGrounds["Menu"],
-                (random.randrange(10), random.randrange(10)))
-            Constants.fenetre.blit(
-                Constants.PlayTxt,
-                (600 + random.randrange(10), 210 + random.randrange(10)))
-            Constants.fenetre.blit(
-                Constants.DrogueTxt,
-                (random.randrange(10) + PosXDrogue, random.randrange(75) + 75))
-            for Exp in TabExplosions:
-                Exp.Blit(Constants.fenetre, TimeElapsed, TabExplosions, 0)
+            self.draw_normal_menu()
         else:
-            PlayTxt = Constants.font4.render("Jouer", 1, (0, 0, 0))
+            self.draw_normal_menu()
 
-            Constants.fenetre.blit(fondMenu, (0, 0))
-            Constants.fenetre.blit(Constants.BackGrounds["Menu"], (0, 0))
-            Constants.fenetre.blit(PlayTxt, (600, 210))
-            fondMenu.fill((190, 0, 0))
+        # for Percus in TabBoum:
+        #     Percus.Move(self.screen, TimeElapsed, TabBoum)
 
-        for Percus in TabBoum:
-            Percus.Move(Constants.fenetre, TimeElapsed, TabBoum)
-
-        pygame.display.flip()
+    def draw_normal_menu(self):
+        self.screen.blit(self.background, (0, 0))
+        for position, image in self.images:
+            self.screen.blit(image, position)
 
     def handleEvents(self):
         for event in super().handleEvent():
-            if event.type == MOUSEBUTTONDOWN:
-                if Constants.BoutonPlay.collidepoint(event.pos):
-                    Constants.Menu = False
-                    Constants.Game = True
-            elif event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    Constants.Menu = False
-                    Constants.Execute = False
-            elif event.type == QUIT:
-                Constants.Execute = False
+            if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                self.running = False
+            elif event.type == pg.QUIT:
+                self.running = False
+    
+    def launch(self, toLaunch: str):
+        if toLaunch == "quit":
+            self.running = False
+        print(f"Launching: {toLaunch}")
