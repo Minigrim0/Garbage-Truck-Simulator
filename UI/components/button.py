@@ -16,12 +16,14 @@ class Button:
         self.ckwargs = ckwargs
         self.toggleable = toggleable
         self.toggled = False
-        if self.toggleable and len(self.image) == 1:
+        if self.image is None:
+            self.image = pg.Surface(self.size)
+        if self.toggleable and (type(self.image) is pg.Surface or len(self.image) == 1):
             raise RuntimeError("No second image available for toggleable button")
 
     @staticmethod
     def toPos(position: tuple, insize: tuple, outsize: tuple):
-        """Tranforms the given position into a real position: eg. ("CENTER", "CENTER") becomes to int values"""
+        """Tranforms the given position into a real position: eg. ("CENTER", "CENTER") becomes two int values"""
         final_position = []
         for axis, var in enumerate(position):
             if type(var) is int:
@@ -38,6 +40,7 @@ class Button:
                     inlength = insize[axis]
                     final_position.append(outlength - inlength)
 
+        print(tuple(final_position))
         return tuple(final_position)
 
     def build(
@@ -46,11 +49,14 @@ class Button:
         font: pg.font.Font,
         text_position: tuple,
         background: pg.Surface = None,
-        text_color: tuple = (0, 0, 0),
+        background_color: tuple = (0, 0, 0),
+        text_color: tuple = (255, 255, 255),
     ):
         """Builds the button with the given text"""
         if background is not None:
             self.image = background
+        else:
+            self.image.fill(background_color)
 
         text = font.render(text, 1, text_color)
         self.image.blit(text, self.toPos(text_position, text.get_size(), self.image.get_size()))
