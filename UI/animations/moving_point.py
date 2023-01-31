@@ -11,7 +11,7 @@ class MovingPoint:
         Creates a new Movable Object, that will update its position
         following a linear path between the start and end positions
 
-        The animation will take time seconds to complete.
+        The animation will take <time> seconds to complete.
 
         A bezier curve can be used instead of a linear path by
         calling the set_bezier method.
