@@ -9,6 +9,7 @@ from models.game_options import GameOptions
 from src.runnable import Runnable
 from UI.menus.menu import Menu
 from UI.components.button import Button
+from UI.animations.image_animation import ImageAnimation
 
 import logging
 logger = logging.getLogger("[Menu][Main]")
@@ -24,13 +25,6 @@ class MainMenu(Menu, Runnable):
 
         self.background: pg.Surface = pg.Surface((1920, 1080))
         self.images = []
-
-        # To be changed
-        self._Backgrounds: dict = {}
-        self.DrogueTxt: pg.Surface = None
-
-        self.PosXDrogue = 1366
-        self.TabExplosions = []
 
         self._build()
 
@@ -49,12 +43,6 @@ class MainMenu(Menu, Runnable):
         self.buttons["quit"].build("Quit", buttons_font, ("CENTER", "CENTER"))
 
     def _build(self):
-        # for x in range(10):
-        #     self.TabExplosions.append(
-        #         Functions.CarCollision(
-        #             x * 136, 670, 0, Constants.TabBigExp, 20)
-        #         )
-
         self.background.fill((190, 0, 0))
         self._build_buttons()
 
@@ -62,7 +50,7 @@ class MainMenu(Menu, Runnable):
             "Garbage Truck Simulator®", 1, (0, 0, 0)
         )
         self.images.append(
-            ((1920/2 - title.get_size()[0] / 2, 100 - title.get_size()[1] / 2), title)
+            ((1920 / 2 - title.get_size()[0] / 2, 100 - title.get_size()[1] / 2), title)
         )
 
         copyright = GameOptions.getInstance().fonts["MedievalSharp-xOZ5"]["20"].render(
@@ -79,6 +67,15 @@ class MainMenu(Menu, Runnable):
             ((30, 1080 - warning.get_size()[1]), warning)
         )
 
+        marcel = pg.image.load("assets/images/marcel.png").convert_alpha()
+        self.images.append(
+            ((1920 / 4 - marcel.get_size()[0] / 2, 1080 * 3 / 4 - marcel.get_size()[1] / 2), marcel)
+        )
+        flipped = pg.transform.flip(marcel, True, False)
+        self.images.append(
+            ((1920 * 3 / 4 - flipped.get_size()[0] / 2, 1080 * 3 / 4 - flipped.get_size()[1] / 2), flipped)
+        )
+
     def loop(self):
         super().loop()
         self.total_time += self.screen.elapsed_time
@@ -91,6 +88,7 @@ class MainMenu(Menu, Runnable):
 
     def update(self):
         """Updates the menu parts that do not depend on the user input"""
+
         if self.total_time >= 2.55 and self.percussion[0] == 0:
             self.percussion = (1, None)  # Functions.Percu(20, 297))
         if self.total_time >= 5.45 and self.percussion[0] == 1:
@@ -115,9 +113,6 @@ class MainMenu(Menu, Runnable):
             self.draw_normal_menu()
         else:
             self.draw_normal_menu()
-
-        # for Percus in TabBoum:
-        #     Percus.Move(self.screen, TimeElapsed, TabBoum)
 
     def draw_normal_menu(self):
         self.screen.blit(self.background, (0, 0))
