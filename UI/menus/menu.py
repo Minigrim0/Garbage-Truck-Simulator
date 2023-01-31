@@ -12,15 +12,19 @@ class Menu:
         self.buttons: {Button} = {}
         self.pickFromBase: dict = pickFrom if pickFrom is not None else {}
         self.screen: Screen = screen
+
+        # allows to draw a background using a custom method before drawing the menu
         self.backgroundCallback: callable = background
         self.background_kwargs = background_kwargs
+
+        self.show_buttons = True
 
     @staticmethod
     def loop():
         """Plays music if needed"""
-        from models.stormtrays import Stormtrays
+        from models.gts import GarbageTruckSimulator
 
-        Stormtrays.getInstance().playMusic()
+        GarbageTruckSimulator.getInstance().playMusic()
 
     @property
     def pickFrom(self):
@@ -34,8 +38,9 @@ class Menu:
 
         self._draw()
 
-        for button in self.buttons.values():
-            button.draw(self.screen)
+        if self.show_buttons:
+            for button in self.buttons.values():
+                button.draw(self.screen)
 
     def handleEvent(self):
         """Handles pygame events and yields it to the calling method"""
