@@ -1,13 +1,14 @@
 import logging
 
-import pygame
+import pygame as pg
 
 from models.gts import GarbageTruckSimulator
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.DEBUG)
 
 logging.info("Initializing pygame")
-pygame.init()
+pg.init()
+pg.key.set_repeat(10, 10)
 
 logging.info("launching game")
 gts = GarbageTruckSimulator.getInstance()
