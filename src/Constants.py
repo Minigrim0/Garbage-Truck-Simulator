@@ -8,7 +8,6 @@ from math import sin, pi
 """ Initialisation de la bibliothèque """
 pygame.init()
 pygame.key.set_repeat(10, 10)
-fenetre = pygame.display.set_mode((1366, 768))  # , pygame.locals.FULLSCREEN)
 
 """ Initialistaion des HITBOXS """
 UpgradeHB = pygame.Rect((750, 300), (400, 100))
