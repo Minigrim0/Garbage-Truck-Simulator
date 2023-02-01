@@ -40,7 +40,6 @@ class Button:
                     inlength = insize[axis]
                     final_position.append(outlength - inlength)
 
-        print(tuple(final_position))
         return tuple(final_position)
 
     def build(
