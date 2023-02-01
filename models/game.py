@@ -1,6 +1,6 @@
 import pygame as pg
 
-from src.runnable import Runnable
+from src.abstracts.runnable import Runnable
 from src.truck import Truck
 from src.map import Map
 

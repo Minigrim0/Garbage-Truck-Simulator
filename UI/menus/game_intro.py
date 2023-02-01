@@ -2,7 +2,7 @@ import pygame as pg
 import logging
 
 from UI.menus.menu import Menu
-from src.runnable import Runnable
+from src.abstracts.runnable import Runnable
 from models.game import Game
 
 

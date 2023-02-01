@@ -6,11 +6,11 @@ import glob
 from datetime import datetime
 
 from models.gts import GarbageTruckSimulator
-from src.runnable import Runnable
+from src.abstracts.runnable import Runnable
 from UI.menus.menu import Menu
 from UI.menus.game_intro import GameIntro
 from UI.components.button import Button
-from UI.animations.image_animation import ImageAnimation
+from src.animations.image_animation import ImageAnimation
 
 import logging
 logger = logging.getLogger("[Menu][Main]")
