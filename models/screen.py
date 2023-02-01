@@ -3,8 +3,6 @@ import time
 import pygame
 from pygame.locals import MOUSEBUTTONDOWN, MOUSEMOTION
 
-from models.game_options import GameOptions
-
 
 class Screen:
     """The singleton class that handles the screen related actions"""
@@ -52,14 +50,18 @@ class Screen:
         self.time_elapsed = 0
         self.startTime = time.time()
 
+        from models.gts import GarbageTruckSimulator
+
+        self.gameInstance = GarbageTruckSimulator.getInstance()
+        self.fps_font = self.gameInstance.options.fonts["MedievalSharp-xOZ5"]["14"]
         self.FPS = 0
         self.showFPS = False
 
     @property
     def elapsed_time(self):
         """Returns the elapsed time times the speed of the game"""
-        options = GameOptions.getInstance()
-        return self.time_elapsed * options.game_speed
+        options = self.gameInstance.options
+        return self.time_elapsed * options["game"]["speed"]
 
     def rescale(self):
         """Resizes the screen to either fullscreen or native size"""
@@ -163,5 +165,4 @@ class Screen:
         self.FPS = 1 / self.time_elapsed
 
         if self.showFPS:
-            font = GameOptions.getInstance().fonts["MedievalSharp-xOZ5"]["14"]
-            self.fenetre.blit(font.render(str(round(self.FPS)), 0, (0, 0, 0)), (0, 0))
+            self.fenetre.blit(self.fps_font.render(str(round(self.FPS)), 0, (0, 0, 0)), (0, 0))
