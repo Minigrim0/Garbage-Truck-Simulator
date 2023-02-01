@@ -5,7 +5,7 @@ import pygame as pg
 import glob
 from datetime import datetime
 
-from models.game_options import GameOptions
+from models.gts import GarbageTruckSimulator
 from src.runnable import Runnable
 from UI.menus.menu import Menu
 from UI.menus.game_intro import GameIntro
@@ -20,9 +20,10 @@ class MainMenu(Menu, Runnable):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         self.percussion = (0, None)
         self.total_time = 0
+        self.gameInstance = GarbageTruckSimulator.getInstance()
 
         self.background: pg.Surface = pg.Surface((1920, 1080))
         self.images = []
@@ -37,34 +38,35 @@ class MainMenu(Menu, Runnable):
             "quit": Button((860, 800), (200, 50), callback=self.launch, toLaunch="quit")
         }
 
-        buttons_font = GameOptions.getInstance().fonts["MedievalSharp-xOZ5"]["40"]
+        buttons_font = self.gameInstance.options.fonts["MedievalSharp-xOZ5"]["40"]
         self.buttons["play"].build("Play", buttons_font, ("CENTER", "CENTER"))
         self.buttons["options"].build("Options", buttons_font, ("CENTER", "CENTER"))
         self.buttons["credits"].build("Credits", buttons_font, ("CENTER", "CENTER"))
         self.buttons["quit"].build("Quit", buttons_font, ("CENTER", "CENTER"))
 
     def _build(self):
-        from models.gts import GarbageTruckSimulator
-        GarbageTruckSimulator.getInstance().play_music("frantic-15190")
+        self.gameInstance.options.play_music("frantic-15190")
 
         self.background.fill((190, 0, 0))
         self._build_buttons()
 
-        title = GameOptions.getInstance().fonts["MedievalSharp-xOZ5"]["100"].render(
+        options = self.gameInstance.options
+
+        title = options.fonts["MedievalSharp-xOZ5"]["100"].render(
             "Garbage Truck Simulator®", 1, (0, 0, 0)
         )
         self.images.append(
             ((1920 / 2 - title.get_size()[0] / 2, 100 - title.get_size()[1] / 2), title)
         )
 
-        copyright = GameOptions.getInstance().fonts["MedievalSharp-xOZ5"]["20"].render(
+        copyright = options.fonts["MedievalSharp-xOZ5"]["20"].render(
             f"Minigrim0 © 2016 - {datetime.now().year}", 1, (0, 0, 0)
         )
         self.images.append(
             ((1920 - copyright.get_size()[0], 1080 - copyright.get_size()[1]), copyright)
         )
 
-        warning = GameOptions.getInstance().fonts["MedievalSharp-xOZ5"]["20"].render(
+        warning = options.fonts["MedievalSharp-xOZ5"]["20"].render(
             "Warning; This game may contain Michael Bay", 1, (0, 0, 0)
         )
         self.images.append(

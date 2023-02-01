@@ -24,7 +24,7 @@ class Menu:
         """Plays music if needed"""
         from models.gts import GarbageTruckSimulator
 
-        GarbageTruckSimulator.getInstance().playMusic()
+        GarbageTruckSimulator.getInstance().options.play_music()
 
     @property
     def pickFrom(self):
