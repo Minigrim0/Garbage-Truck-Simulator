@@ -1,21 +1,56 @@
 import math
-import pygame
+import logging
+import pygame as pg
 
-from utils import rot_center
-
+# from src.utils.rot_center import rot_center
+from src.utils.bound import bound
 
 class Truck(object):
 
     def __init__(self):
-        self.Imgs = []
+        self.image: pg.Surface = None
         self.Nitro = False
-        self.PuissNitroBas
-        self.PuissNitro
+
+        self.position = (15, 800)
+        self.health = 100
+        self.speed = 30  # km/h
+        self.steering_speed = 10
+
+    @property
+    def actual_speed(self):
+        """
+        Returns the truck speed in terms of pixels per second
+        A meter is 64 pixels
+        """
+        return (self.speed / 3.6) * 64
 
     def load(self):
-        truckImg = pygame.image.load(
-            "Images/CamionPoubelle.png").convert_alpha()
+        logging.info("Loading truck")
+        self.image = pg.image.load("assets/images/CamionPoubelle.png").convert_alpha()
 
-        for x in range(8):
-            self.Imgs.append(
-                rot_center(truckImg, 5 * math.sin(x * 180/math.pi)))
+    def draw(self, screen):
+        screen.blit(self.image, self.position)
+
+    def move(self, up: bool, timeElapsed: float):
+        if up:
+            self.position = (
+                self.position[0],
+                bound(350, 620, self.position[1] - self.steering_speed * timeElapsed),
+            )
+        else:
+            self.position = (
+                self.position[0],
+                bound(350, 620, self.position[1] + self.steering_speed * timeElapsed),
+            )
+
+    def handleEvents(self, event):
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_DOWN:
+                self.move(False, 1)
+            elif event.key == pg.K_UP:
+                self.move(True, 1)
+            elif event.key == pg.K_RIGHT:
+                if not Constants.Nitro and not Constants.CamionPart:
+                    Constants.Sounds["Nitro"].play()
+                    Constants.Nitro = True
+                    PuissNitroBas = Constants.PuissNitro

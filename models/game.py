@@ -1,39 +1,66 @@
-    if Constants.Game:
-        Constants.fenetre.blit(
-            Constants.BackGrounds["Conseils"], (0, 0))
-        pygame.display.flip()
-        QuitLoop = False
-        while 1:
-            for event in pygame.event.get():
-                if event.type == KEYDOWN:
-                    QuitLoop = True
-            if QuitLoop:
-                break
-        HELIC = Functions.Helico()
-        timeAtStart = time.time()
-        Constants.DistPar = Constants.Objective
-        Constants.CamionPart = False
-        HelicMove = False
-        Distrib = False
-        Constants.Nitro = False
-        ListePoubelle = []
-        Constants.PositionRue2 = 3000
-        Constants.AlcoholRate = 0
-        PosCamionYb = 450
-        Constants.Speed = 150
-        Constants.PosCamionX = 100
-        Constants.Niveau = 1
-        Constants.NbPoubellesApparue = 0
-        Constants.NbPoubellesPrises = 0
-        Constants.PositionRue1 = 0
-        TimeElapsed = 0
-        Constants.PuissNitro = 0
-        Constants.TotTime = 0
-        Constants.VitMax = 0
-        TruckFrame = 0
+import pygame as pg
 
-    while Constants.Game:
+from src.runnable import Runnable
+from src.truck import Truck
+from src.map import Map
 
+
+class Game(Runnable):
+
+    instance = None
+
+    @staticmethod
+    def getInstance(*args, **kwargs):
+        if Game.instance is None:
+            Game.instance = Game(*args, **kwargs)
+        return Game.instance
+
+    def __init__(self, screen):
+        if Game.instance is not None:
+            raise Exception("This class is a singleton!")
+        Game.instance = self
+
+        self.objective = 5000  # The distance to travel
+
+        self.screen = screen
+
+        self.objects = []  # The list of objects to draw & update
+        self.truck: Truck = None  # The truck pawn
+        self.map: Map = None  # The map
+
+        self.load()
+
+        # HELIC = Functions.Helico()
+        # Constants.CamionPart = False
+        # HelicMove = False
+        # Distrib = False
+        # Constants.Nitro = False
+        # ListePoubelle = []
+        # Constants.PositionRue2 = 3000
+        # Constants.AlcoholRate = 0
+        # PosCamionYb = 450
+        # Constants.Speed = 150
+        # Constants.PosCamionX = 100
+        # Constants.Niveau = 1
+        # Constants.NbPoubellesApparue = 0
+        # Constants.NbPoubellesPrises = 0
+        # Constants.PositionRue1 = 0
+        # TimeElapsed = 0
+        # Constants.PuissNitro = 0
+        # Constants.TotTime = 0
+        # Constants.VitMax = 0
+        # TruckFrame = 0
+
+    def load(self):
+        self.truck = Truck()
+        self.truck.load()
+        self.map = Map()
+        self.map.load()
+
+    def update(self):
+        self.map.update(self.truck.actual_speed, self.screen.elapsed_time)
+
+        return
         if Constants.TruckBrokeState <= 0:
             Constants.Game = False
             Constants.Garage = True
@@ -117,8 +144,6 @@
             Constants.PositionRue1 = 0
             Constants.PositionRue2 = 3000
 
-        Constants.fenetre.blit(Constants.BackGrounds["Rue"], (Constants.PositionRue1, 0))
-        Constants.fenetre.blit(Constants.BackGrounds["Rue"], (Constants.PositionRue2, 0))
         Constants.PosCamionY = PosCamionYb - 0.5 * Constants.AlcoholRate * math.sin(Constants.TotTime * 10)
         if HelicMove:
             HELIC.Move(Constants.fenetre, TimeElapsed)
@@ -126,6 +151,14 @@
                 Distrib = True
                 HelicMove = False
                 StartTime = time.time()
+
+    def draw(self):
+        self.map.draw(self.screen)
+        self.truck.draw(self.screen)
+        return
+
+        Constants.fenetre.blit(Constants.BackGrounds["Rue"], (Constants.PositionRue1, 0))
+        Constants.fenetre.blit(Constants.BackGrounds["Rue"], (Constants.PositionRue2, 0))
 
         for Poub in ListePoubelle:
             Poub.BlitAndMove(Constants.fenetre, TimeElapsed, ListePoubelle, Constants.Speed)
@@ -198,24 +231,16 @@
         Constants.fenetre.blit(Dist, (900, 10))
         if Constants.NbPoubellesApparue != 0:
             Constants.fenetre.blit(Effic, (900, 90))
-        pygame.display.flip()
 
-        for event in pygame.event.get():
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    Constants.Execute = False
-                elif event.key == K_DOWN:
-                    if PosCamionYb < 620:
-                        PosCamionYb += 10
-                        CamionHitBox = pygame.Rect(
-                            (292, 150), (100, Constants.PosCamionY + 7))
-                elif event.key == K_UP:
-                    if PosCamionYb > 350:
-                        PosCamionYb -= 10
-                        CamionHitBox = pygame.Rect(
-                            (292, 150), (100, Constants.PosCamionY + 7))
-                elif event.key == K_RIGHT:
-                    if not Constants.Nitro and not Constants.CamionPart:
-                        Constants.Sounds["Nitro"].play()
-                        Constants.Nitro = True
-                        PuissNitroBas = Constants.PuissNitro
+    def loop(self):
+        self.handleEvents()
+        self.update()
+        self.draw()
+        self.screen.flip()
+
+    def handleEvents(self):
+        for event in self.screen.getEvent():
+            self.truck.handleEvents(event)
+            if event.type == pg.KEYUP:
+                if event.key == pg.K_ESCAPE:
+                    self.running = False
