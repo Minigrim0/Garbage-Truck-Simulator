@@ -1,15 +1,15 @@
 import pygame as pg
 
 from src.animations.image_animation import ImageAnimation
-from src.animations.animation import Animation
+from src.animations.movement_animation import MovementAnimation
+
 
 class Component:
     def __init__(self,
         name: str,
         image: pg.Surface,
-        animation_path: str = None,
-        animation_speed: int = None,
-        path: list = None,
+        movement_animation: MovementAnimation = None,
+        image_animation: ImageAnimation = None
     ):
         self.name = name
 
