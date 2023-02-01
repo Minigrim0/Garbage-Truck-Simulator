@@ -9,7 +9,7 @@ from models.image_bank import ImageBank
 from models.screen import Screen
 
 
-class ImageAnimation:
+class SpriteAnimation:
     """An animation of images"""
 
     def __init__(
