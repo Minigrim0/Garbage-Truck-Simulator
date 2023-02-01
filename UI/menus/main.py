@@ -8,6 +8,7 @@ from datetime import datetime
 from models.game_options import GameOptions
 from src.runnable import Runnable
 from UI.menus.menu import Menu
+from UI.menus.game_intro import GameIntro
 from UI.components.button import Button
 from UI.animations.image_animation import ImageAnimation
 
@@ -43,6 +44,9 @@ class MainMenu(Menu, Runnable):
         self.buttons["quit"].build("Quit", buttons_font, ("CENTER", "CENTER"))
 
     def _build(self):
+        from models.gts import GarbageTruckSimulator
+        GarbageTruckSimulator.getInstance().play_music("frantic-15190")
+
         self.background.fill((190, 0, 0))
         self._build_buttons()
 
@@ -129,4 +133,6 @@ class MainMenu(Menu, Runnable):
     def launch(self, toLaunch: str):
         if toLaunch == "quit":
             self.running = False
+        elif toLaunch == "game":
+            GameIntro(self.screen)()
         print(f"Launching: {toLaunch}")
