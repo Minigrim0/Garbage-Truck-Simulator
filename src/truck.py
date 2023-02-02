@@ -29,13 +29,16 @@ class Truck(object):
         self.nitro_replenish_speed = 5  # per second
         self.nitro_consumption_speed = 20  # per second
         self.nitro_gauge: Gauge = None
+        self.nitro_multiplier = 2
 
         self.position = (15, 500)
         self.health = 100
         self.max_health = 100
-        self.speed = 30  # km/h
+
+        self._speed = 30  # km/h
         self.steering_speed = 250  # px/s
         self.steering = Truck.NONE
+        self.speed_gauge: Gauge = None
 
         self.rotation = 0
         self.rotation_percent = 0
@@ -50,13 +53,25 @@ class Truck(object):
         Returns the truck speed in terms of pixels per second
         A meter is 64 pixels
         """
-        if self.nitro:
-            return (self.speed / 3.6) * 64 * 2
         return (self.speed / 3.6) * 64
+
+    @property
+    def speed(self):
+        if self.nitro:
+            return self._speed * self.nitro_multiplier
+        return self._speed
 
     @property
     def alive(self):
         return self.health > 0
+
+    def set_speed(self, speed: float):
+        """Sets the speed of the truck (In km/h)
+
+        Args:
+            speed (float): The speed in km/h
+        """
+        self._speed = speed
 
     def load(self):
         logging.info("Loading truck")
@@ -83,6 +98,12 @@ class Truck(object):
             value_color=(0, 0, 0), value_in_percent=True
         )
 
+        self.speed_gauge = Gauge(
+            min_angle=-20, max_angle=200, min_value=0, max_value=350,
+            initial_value=self.speed, show_value=True, value_font=self.ui_font,
+            value_color=(0, 0, 0), value_in_percent=False, value_suffix=" km/h"
+        )
+
     def draw(self, screen):
         self.health_bar.draw(screen, self.position)
         screen.blit(
@@ -90,6 +111,7 @@ class Truck(object):
             self.position
         )
         self.nitro_gauge.draw(screen, (10, 800))
+        self.speed_gauge.draw(screen, (250, 800))
 
         if self.nitro:
             self.nitro_animation.draw(screen, self.position)
@@ -121,6 +143,7 @@ class Truck(object):
             self.move(self.steering == Truck.UP, timeElapsed)
         self.health_bar.update(timeElapsed)
         self._update_nitro(timeElapsed)
+        self.speed_gauge.update(self.speed)
         self.rotation_percent = bound(0, 1, self.rotation_percent + timeElapsed)
         if self.rotation_percent == 1:
             self.rotation_percent = 0
