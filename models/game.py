@@ -59,6 +59,7 @@ class Game(Runnable):
 
     def update(self):
         self.map.update(self.truck.actual_speed, self.screen.elapsed_time)
+        self.truck.update(self.screen.elapsed_time)
 
         return
         if Constants.TruckBrokeState <= 0:
