@@ -73,21 +73,12 @@ class Game(Runnable):
         if Constants.Speed > Constants.VitMax:
             Constants.VitMax = Constants.Speed
 
-        TimeElapsed = time.time() - timeAtStart
-        Constants.PositionRue1 -= TimeElapsed * Constants.Speed
-        Constants.PositionRue2 -= TimeElapsed * Constants.Speed
-        timeAtStart = time.time()
-        StartTime = 0
-
         if Distrib:
             for x in range(10):
                 Obj = Functions.Poubelle(1)
                 ListePoubelle.append(Obj)
             if time.time() - StartTime >= 2.5:
                 Distrib = False
-
-        if not pygame.mixer.music.get_busy():
-            pygame.mixer.music.play()
 
         Constants.DistPar -= ((Constants.Speed * TimeElapsed) / 100)
         Constants.TotTime += TimeElapsed
@@ -158,9 +149,6 @@ class Game(Runnable):
         self.truck.draw(self.screen)
         return
 
-        Constants.fenetre.blit(Constants.BackGrounds["Rue"], (Constants.PositionRue1, 0))
-        Constants.fenetre.blit(Constants.BackGrounds["Rue"], (Constants.PositionRue2, 0))
-
         for Poub in ListePoubelle:
             Poub.BlitAndMove(Constants.fenetre, TimeElapsed, ListePoubelle, Constants.Speed)
             if Poub.PosX <= 392 and Poub.PosX >= 100 and Poub.PosY >= Constants.PosCamionY and Poub.PosY <= Constants.PosCamionY + 150 and Poub in ListePoubelle:
@@ -197,27 +185,6 @@ class Game(Runnable):
                         ((Constants.TruckBrokeState / 100) * 292, 10))
                     Constants.BrokeStateBar.fill((0, 255, 75))
 
-        if Constants.Nitro or Constants.Speed >= 70000:
-            Constants.fenetre.blit(Constants.TabImgHard[int(TruckFrame)], (380, 25))
-            Constants.fenetre.blit(
-                Constants.TabImgFlammes[int(TruckFrame)],
-                (-100, Constants.PosCamionY - 40))
-        if not Constants.CamionPart:
-            Constants.fenetre.blit(
-                Constants.TabImgCamion[int(TruckFrame)],
-                (Constants.PosCamionX, Constants.PosCamionY))
-        else:
-            Constants.Nitro = False
-            Constants.PosCamionX += AnSpeed * TimeElapsed
-            Constants.fenetre.blit(
-                Constants.TabImgCamion[int(TruckFrame)],
-                (Constants.PosCamionX, Constants.PosCamionY))
-            if Constants.PosCamionX >= 1366:
-                Constants.Game = False
-                Constants.RecapMission = True
-        Constants.fenetre.blit(
-            Constants.BarreEtat_Arriere, (Constants.PosCamionX, Constants.PosCamionY - 10))
-        Constants.fenetre.blit(Constants.BrokeStateBar, (Constants.PosCamionX, Constants.PosCamionY - 10))
         for Point in Constants.ListePoints:
             Point.Blit(
                 Constants.fenetre, TimeElapsed,
