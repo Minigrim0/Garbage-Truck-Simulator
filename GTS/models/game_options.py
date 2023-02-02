@@ -58,7 +58,7 @@ class GameOptions:
 
     def _load(self):
         """Loads the game's fonts"""
-        for font in glob.glob("UI/assets/fonts/*/*.ttf"):
+        for font in glob.glob("assets/fonts/*/*.ttf"):
             filename = os.path.splitext(os.path.split(font)[1])[0]
             self.fonts[filename] = {}
             for size in [12, 14, 20, 25, 35, 40, 60, 100, 500]:

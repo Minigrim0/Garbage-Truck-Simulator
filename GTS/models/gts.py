@@ -26,9 +26,9 @@ class GarbageTruckSimulator:
         GarbageTruckSimulator.instance = self
 
         self.options = GameOptions.getInstance()
-        self.screen = Screen.getInstance((1920, 1080), "GarbageTruckSimulator", "UI/assets/images/icon.png", False)
+        self.screen = Screen.getInstance((1920, 1080), "GarbageTruckSimulator", "assets/images/interface/window/icon.png", False)
 
-        from UI.menus.main import MainMenu
+        from GTS.interface.menus.main import MainMenu
 
         self.mainMenu = MainMenu(self.screen)
 

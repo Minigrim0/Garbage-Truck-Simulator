@@ -37,7 +37,7 @@ class Screen:
 
         self.scaleButton = Button(
             (2, self.initial_size[1] - 22), (20, 20),
-            image=pygame.image.load("GTS/interface/assets/images/scale.png").convert_alpha()
+            image=pygame.image.load("assets/images/interface/window/scale.png").convert_alpha()
         )
         self.scaleButton.callback = self.rescale
 
@@ -50,7 +50,7 @@ class Screen:
         self.time_elapsed = 0
         self.startTime = time.time()
 
-        from models.gts import GarbageTruckSimulator
+        from GTS.models.gts import GarbageTruckSimulator
 
         self.gameInstance = GarbageTruckSimulator.getInstance()
         self.fps_font = self.gameInstance.options.fonts["MedievalSharp-xOZ5"]["14"]

@@ -24,8 +24,8 @@ class Gauge:
         self.value_suffix = value_suffix
         self.value_text: pg.Surface = None
 
-        self.background_image = pg.image.load("assets/images/ui/gauge.png").convert_alpha()
-        self.needle_image = pg.image.load("assets/images/ui/gauge_bar.png").convert_alpha()
+        self.background_image = pg.image.load("assets/images/interface/gauge/gauge.png").convert_alpha()
+        self.needle_image = pg.image.load("assets/images/interface/gauge/gauge_bar.png").convert_alpha()
 
         self._update_needle()
         self._update_value_text()

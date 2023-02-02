@@ -21,7 +21,7 @@ class Menu:
     @staticmethod
     def loop():
         """Plays music if needed"""
-        from models.gts import GarbageTruckSimulator
+        from GTS.models.gts import GarbageTruckSimulator
 
         GarbageTruckSimulator.getInstance().options.play_music()
 
