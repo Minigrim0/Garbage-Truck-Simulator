@@ -9,7 +9,7 @@ class Gauge:
         min_value: float, max_value: float,
         initial_value: float, show_value: bool = False,
         value_font: pg.font.Font = None, value_color: tuple = (0, 0, 0),
-        value_in_percent: bool = False, value_postfix: str = ""):
+        value_in_percent: bool = False, value_suffix: str = ""):
 
         self.min_angle = min_angle
         self.max_angle = max_angle
@@ -21,7 +21,7 @@ class Gauge:
         self.value_font = value_font
         self.value_color = value_color
         self.value_in_percent = value_in_percent
-        self.value_postfix = value_postfix
+        self.value_suffix = value_suffix
         self.value_text: pg.Surface = None
 
         self.background_image = pg.image.load("assets/images/ui/gauge.png").convert_alpha()
@@ -52,7 +52,7 @@ class Gauge:
             )
         else:
             self.value_text = self.value_font.render(
-                f"{self.value}{self.value_postfix}", False, self.value_color
+                f"{self.value}{self.value_suffix}", False, self.value_color
             )
 
     def update(self, value):
