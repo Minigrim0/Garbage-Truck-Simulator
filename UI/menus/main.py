@@ -10,7 +10,6 @@ from src.abstracts.runnable import Runnable
 from UI.menus.menu import Menu
 from UI.menus.game_intro import GameIntro
 from UI.components.button import Button
-from src.animations.image_animation import ImageAnimation
 
 import logging
 logger = logging.getLogger("[Menu][Main]")
