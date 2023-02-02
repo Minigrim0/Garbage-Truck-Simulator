@@ -2,6 +2,7 @@ from pygame.locals import MOUSEBUTTONDOWN
 
 from GTS.models.screen import Screen
 from GTS.interface.components.button import Button
+from GTS.models.gts import GarbageTruckSimulator
 
 
 class Menu:
@@ -21,8 +22,6 @@ class Menu:
     @staticmethod
     def loop():
         """Plays music if needed"""
-        from GTS.models.gts import GarbageTruckSimulator
-
         GarbageTruckSimulator.getInstance().options.play_music()
 
     @property
