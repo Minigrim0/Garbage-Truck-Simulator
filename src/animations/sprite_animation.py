@@ -8,6 +8,8 @@ import pygame as pg
 from models.image_bank import ImageBank
 from models.screen import Screen
 
+from src.utils.rot_center import rot_center
+
 
 class SpriteAnimation:
     """An animation of images"""
@@ -16,7 +18,8 @@ class SpriteAnimation:
         self, folder_path: str = None, flippable: bool = False,
         callback: callable = None, speed: int = 2, image_size: tuple = (-1, -1),
         loop: int = 1, bank_name: str = None,
-        callback_on: list = None, initial_data: dict = None
+        callback_on: list = None, initial_data: dict = None,
+        rotation: int = 0
     ):
         """Initializes a new ImageAnimation
 
@@ -52,26 +55,53 @@ class SpriteAnimation:
         self.multipart = False
         self.callback_on = callback_on if callback_on is not None else [-1]  # When to call the callback
 
-        self._load(image_size, folder_path=folder_path, initial_data=initial_data, bank_name=bank_name)
+        self._load(image_size, folder_path=folder_path, initial_data=initial_data, bank_name=bank_name, rotation=rotation)
 
-    def _load(self, image_size, folder_path: str = None, initial_data: dict = None, bank_name: str = None):
+    def _load(self, image_size, folder_path: str = None, initial_data: dict = None, bank_name: str = None, rotation: int = 0):
         """Loads the animation from the given parameters"""
         bank = ImageBank.getInstance()
         if (bank_name is None or not bank.exists(bank_name)):
             if folder_path is not None:
                 logging.info(f"loading animation from folder {folder_path}")
-                self._loadFolder(folder_path, image_size=image_size)
+                self._loadFolder(folder_path, image_size=image_size, rotation=rotation)
             elif initial_data is not None:
                 logging.info("loading animation from dict")
-                self._loadDict(initial_data, image_size=image_size)
+                self._loadDict(initial_data, image_size=image_size, rotation=rotation)
             self._saveBank(bank, bank_name)
         elif bank_name is not None and bank.exists(bank_name):
             logging.info(f"loading animation from bank '{bank_name}'")
-            self._loadBank(bank, bank_name)
+            self._loadBank(bank, bank_name, image_size=image_size, rotation=rotation)
 
-    def _loadMultipart(self, setup: dict, folder_path: str, image_size: tuple = (-1, -1)):
+    def _rotateMultipart(self, original: pg.Surface, cut_size: tuple, rotation: int):
+        first_image = rot_center(
+            original.subsurface(
+                pg.Rect((0, 0), (original.get_size()[0] / cut_size[0], original.get_size()[1] / cut_size[1]))
+            ),
+            rotation
+        )
+        # create a new image with the new size
+        temp_img = pg.Surface(
+            (cut_size[0] * first_image.get_width(), cut_size[1] * first_image.get_width()),
+            pg.SRCALPHA
+        )
+        # blit the rotated images to the new image
+        for y in range(cut_size[1]):
+            for x in range(cut_size[0]):
+                temp_img.blit(
+                    rot_center(
+                        original.subsurface(
+                            pg.Rect((x * first_image.get_width(), y * first_image.get_width()), (first_image.get_width(), first_image.get_width()))
+                        ),
+                        rotation
+                    ),
+                    (x * first_image.get_width(), y * first_image.get_width())
+                )
+        return temp_img
+
+    def _loadMultipart(self, setup: dict, folder_path: str, image_size: tuple = (-1, -1), rotation: int = 0):
         """Loads an animation from a single image file"""
-        cut_size = tuple(setup["size"])
+
+        cut_size = tuple(setup["size"])  # The amount of image in each axis
         self.original_image = pg.image.load(os.path.join(folder_path, setup["file"])).convert_alpha()
 
         if image_size != (-1, -1):
@@ -82,6 +112,9 @@ class SpriteAnimation:
                     cut_size[1] * image_size[1]
                 )
             )
+
+        if rotation != 0:
+            self.original_image = self._rotateMultipart(self.original_image, cut_size, rotation)
 
         if self.flippable:
             self.flipped_original_image = pg.transform.flip(self.original_image, True, False)
@@ -103,7 +136,7 @@ class SpriteAnimation:
                         )
                     )
 
-    def _loadFormat(self, image_format: str, image_size: tuple = (-1, -1)):
+    def _loadFormat(self, image_format: str, image_size: tuple = (-1, -1), rotation: int = 0):
         """Loads images in a folder following a certain format (Ex: *.png)"""
         for image in sorted(glob.glob(image_format)):
             self.images.append(
@@ -118,14 +151,14 @@ class SpriteAnimation:
                     pg.transform.flip(self.images[-1], True, False)
                 )
 
-    def _loadDict(self, data: dict, image_size: tuple = (-1, -1)):
+    def _loadDict(self, data: dict, image_size: tuple = (-1, -1), rotation: int = 0):
         """Loads an animation from a dictionnary containing the needed information"""
         self.flippable = data["flippable"]
         self.speed = data["speed"]
         self.loop = data["loop"]
         self.multipart = data["animations"][0]["multipart"]
         if self.multipart:
-            self._loadMultipart(data["animations"][0], "assets/", image_size=image_size)
+            self._loadMultipart(data["animations"][0], "assets/", image_size=image_size, rotation=rotation)
         else:
             images_format = os.path.join(data["animations"][0], data["format"])
             self._loadFormat(images_format, image_size=image_size)
@@ -141,13 +174,13 @@ class SpriteAnimation:
                 )
             )
 
-    def _loadBank(self, bank: ImageBank, bank_name: str):
+    def _loadBank(self, bank: ImageBank, bank_name: str, rotation: int = 0):
         """Loads an animation set from the image bank"""
         self.images, self.images_flipped, self.multipart, self.original_image, self.flipped_original_image = bank[
             bank_name
         ]
 
-    def _loadFolder(self, folder_path: str, image_size: tuple):
+    def _loadFolder(self, folder_path: str, image_size: tuple, rotation: int = 0):
         """Loads an animation from a folder"""
         setup_file = os.path.join(folder_path, "setup.json")
         if not os.path.exists(setup_file):
@@ -160,11 +193,11 @@ class SpriteAnimation:
             self.multipart = setup["multipart"]
             if self.multipart:
                 logging.info("loading multipart animation")
-                self._loadMultipart(setup, folder_path, image_size=image_size)
+                self._loadMultipart(setup, folder_path, image_size=image_size, rotation=rotation)
             else:
                 logging.info("loading singlepart animation")
                 images_format = os.path.join(folder_path, setup["format"])
-                self._loadFormat(images_format, image_size=image_size)
+                self._loadFormat(images_format, image_size=image_size, rotation=rotation)
 
     def _stepUp(self):
         """Called at each animation step"""
