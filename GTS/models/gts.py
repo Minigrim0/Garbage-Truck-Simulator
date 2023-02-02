@@ -4,8 +4,8 @@ import random
 
 import pygame
 
-from models.game_options import GameOptions
-from models.screen import Screen
+from GTS.models.game_options import GameOptions
+from GTS.models.screen import Screen
 
 
 class GarbageTruckSimulator:

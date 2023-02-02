@@ -5,7 +5,7 @@ import random
 
 import pygame as pg
 
-from src.utils.bound import bound
+from GTS.utils.bound import bound
 
 
 class GameOptions:

@@ -1,6 +1,6 @@
 import pygame as pg
 
-from src.utils.rot_center import rot_center
+from GTS.utils.rot_center import rot_center
 
 
 class Gauge:

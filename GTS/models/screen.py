@@ -33,11 +33,11 @@ class Screen:
         else:
             self.resize(self.initial_size)
 
-        from UI.components.button import Button  # NOQA
+        from GTS.interface.components.button import Button  # NOQA
 
         self.scaleButton = Button(
             (2, self.initial_size[1] - 22), (20, 20),
-            image=pygame.image.load("UI/assets/images/scale.png").convert_alpha()
+            image=pygame.image.load("GTS/interface/assets/images/scale.png").convert_alpha()
         )
         self.scaleButton.callback = self.rescale
 
@@ -80,7 +80,7 @@ class Screen:
             )
         else:
             self.display = pygame.display.set_mode(
-                size, pygame.locals.RESIZABLE | pygame.locals.HWSURFACE | pygame.locals.DOUBLEBUF | pygame.locals.SCALED)
+                size)  # , pygame.locals.RESIZABLE | pygame.locals.HWSURFACE | pygame.locals.DOUBLEBUF | pygame.locals.SCALED)
 
         taillex = size[0] / self.initial_size[0]
         tailley = size[1] / self.initial_size[1]

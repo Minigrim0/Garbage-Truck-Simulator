@@ -1,5 +1,5 @@
-from src.abstracts.animation.speed import AnimationSpeed
-from src.abstracts.animation.path import AnimationPath
+from GTS.abstracts.animation.speed import AnimationSpeed
+from GTS.abstracts.animation.path import AnimationPath
 
 
 class MovementAnimation:

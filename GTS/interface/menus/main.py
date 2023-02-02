@@ -5,11 +5,11 @@ import pygame as pg
 import glob
 from datetime import datetime
 
-from models.gts import GarbageTruckSimulator
-from src.abstracts.runnable import Runnable
-from UI.menus.menu import Menu
-from UI.menus.game_intro import GameIntro
-from UI.components.button import Button
+from GTS.models.gts import GarbageTruckSimulator
+from GTS.abstracts.runnable import Runnable
+from GTS.interface.menus.menu import Menu
+from GTS.interface.menus.game_intro import GameIntro
+from GTS.interface.components.button import Button
 
 import logging
 logger = logging.getLogger("[Menu][Main]")

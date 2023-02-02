@@ -2,7 +2,7 @@ import math as m
 
 import pygame as pg
 
-from models.screen import Screen
+from GTS.models.screen import Screen
 
 
 class LoadingBar:

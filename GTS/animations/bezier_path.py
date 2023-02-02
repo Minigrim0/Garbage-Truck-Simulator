@@ -1,19 +1,12 @@
 import bezier
 import numpy as np
 
-from src.abstracts.animation_speed import AnimationSpeed
+from GTS.abstracts.animation.speed import AnimationSpeed
 
 
-class BezierSpeed(AnimationSpeed):
+class BezierPath(AnimationPath):
     """
-    Defines a speed function from a bezier curve
-
-    Curves must start at (0, 0) and end at (1, 1). The Y value of the curve
-    is the percentage of the animation path that has been completed. The X axis
-    is evaluated as the percentage of the animation time that has been completed.
-
-    E.g. a linear curve would be [(0, 0), (1, 1)] and a curve that starts slow and
-    ends fast would be [(0, 0), (1.0, 0.0), (1, 1)]
+    Defines a path function from a bezier curve
     """
 
     def __init__(self, control_points: list):

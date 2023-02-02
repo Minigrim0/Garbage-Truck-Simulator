@@ -1,9 +1,9 @@
 import pygame as pg
 import logging
 
-from UI.menus.menu import Menu
-from src.abstracts.runnable import Runnable
-from models.game import Game
+from GTS.interface.menus.menu import Menu
+from GTS.abstracts.runnable import Runnable
+from GTS.models.game import Game
 
 
 class GameIntro(Menu, Runnable):

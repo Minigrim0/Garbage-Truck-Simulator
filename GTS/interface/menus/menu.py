@@ -1,8 +1,7 @@
-
 from pygame.locals import MOUSEBUTTONDOWN
 
-from models.screen import Screen
-from UI.components.button import Button
+from GTS.models.screen import Screen
+from GTS.interface.components.button import Button
 
 
 class Menu:

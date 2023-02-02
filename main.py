@@ -2,7 +2,7 @@ import logging
 
 import pygame as pg
 
-from models.gts import GarbageTruckSimulator
+from GTS.models.gts import GarbageTruckSimulator
 
 logging.basicConfig(level=logging.DEBUG)
 

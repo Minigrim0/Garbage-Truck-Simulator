@@ -1,8 +1,8 @@
 import pygame as pg
 
-from src.abstracts.runnable import Runnable
-from src.truck import Truck
-from src.map import Map
+from GTS.abstracts.runnable import Runnable
+from GTS.models.truck import Truck
+from GTS.models.map import Map
 
 
 class Game(Runnable):

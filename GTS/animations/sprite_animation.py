@@ -5,10 +5,10 @@ import os
 
 import pygame as pg
 
-from models.image_bank import ImageBank
-from models.screen import Screen
+from GTS.models.image_bank import ImageBank
+from GTS.models.screen import Screen
 
-from src.utils.rot_center import rot_center
+from GTS.utils.rot_center import rot_center
 
 
 class SpriteAnimation:

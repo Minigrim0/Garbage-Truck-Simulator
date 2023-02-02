@@ -2,14 +2,13 @@ import math
 import logging
 import pygame as pg
 
-from src.utils.rot_center import rot_center
-from models.gts import GarbageTruckSimulator
+from GTS.utils.rot_center import rot_center
+from GTS.models.gts import GarbageTruckSimulator
 
-from src.utils.bound import bound
-from UI.components.loading_bar import LoadingBar
-from src.animations.sprite_animation import SpriteAnimation
-
-from UI.components.gauge import Gauge
+from GTS.utils.bound import bound
+from GTS.interface.components.loading_bar import LoadingBar
+from GTS.interface.components.gauge import Gauge
+from GTS.animations.sprite_animation import SpriteAnimation
 
 
 class Truck(object):

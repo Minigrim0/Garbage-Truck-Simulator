@@ -1,7 +1,7 @@
 import pygame as pg
 
-from src.animations.image_animation import ImageAnimation
-from src.animations.movement_animation import MovementAnimation
+from GTS.animations.image_animation import ImageAnimation
+from GTS.animations.movement_animation import MovementAnimation
 
 
 class Component:
