@@ -121,9 +121,11 @@ class Truck(object):
 
     def hurt(self, damage):
         self.health -= damage
+        self.health_bar.set_advancement(self.health)
 
     def heal(self, heal):
         self.health += heal
+        self.health_bar.set_advancement(self.health)
 
     def _update_nitro(self, timeElapsed: float):
         if self.nitro_cooldown > 0:
