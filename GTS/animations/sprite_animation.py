@@ -19,7 +19,7 @@ class SpriteAnimation:
         callback: callable = None, speed: int = 2, image_size: tuple = (-1, -1),
         loop: int = 1, bank_name: str = None,
         callback_on: list = None, initial_data: dict = None,
-        rotation: int = 0
+        rotation: int = 0, position: tuple = None
     ):
         """Initializes a new ImageAnimation
 
@@ -48,6 +48,8 @@ class SpriteAnimation:
         self.playing: bool = False
         self.speed: int = speed
         self.trigger = callback
+
+        self.position = position
 
         self.loop = loop  # -1 means infinite
         self.current_loop = 0
@@ -222,6 +224,14 @@ class SpriteAnimation:
         self.trigger = callback
         self.callback_on = callback_on if callback_on is not None else [-1]
 
+    def setPosition(self, position: tuple):
+        """Sets the animation position"""
+        self.position = position
+
+    def move(self, offset: tuple):
+        """Moves the animation"""
+        self.position = (self.position[0] + offset[0], self.position[1] + offset[1])
+
     def play(self):
         """Sets the animation state to playing"""
         self.playing = True
@@ -267,8 +277,13 @@ class SpriteAnimation:
             return self.original_image.subsurface(frame)
         return frame
 
-    def draw(self, screen: Screen, position: tuple, centered: bool = False):
+    def draw(self, screen: Screen, position: tuple = None, centered: bool = False):
         """Draws the current frame on the screen, at the given position"""
+        if self.position is not None:
+            position = self.position
+        if position is None and self.position is None:
+            raise ValueError("No position given to draw the animation")
+
         if self.multipart:
             if centered:
                 size = self.currentFrame()
