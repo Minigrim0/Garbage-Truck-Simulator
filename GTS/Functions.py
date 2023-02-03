@@ -24,54 +24,6 @@ class Percu(object):
         if self.time >= 0.6:
             TabBoum.remove(self)
 
-
-class Poubelle(object):
-
-    def __init__(self, type):
-        if type == 0:
-            if random.randrange(100) != 0:
-                self.Img = pygame.image.load(
-                    "Images/Poubelle.png").convert_alpha()
-                self.IsPowerUp = False
-            else:
-                self.PowerType = random.randrange(2)
-                if self.PowerType == 0:
-                    self.Img = pygame.image.load(
-                        "Images/Cara.png").convert_alpha()
-                elif self.PowerType == 1:
-                    self.Img = pygame.image.load(
-                        "Images/Poubellerar.png").convert_alpha()
-                self.IsPowerUp = True
-        elif type == 1:
-            self.PowerType = 0
-            self.Img = pygame.image.load("Images/Cara.png").convert_alpha()
-            self.IsPowerUp = True
-
-        self.PosY = random.randrange(350)+410
-        self.PosX = 1370
-
-    def BlitAndMove(self, fenetre, TimeElapsed, ListePoubelle, Speed):
-        self.PosX -= Speed*TimeElapsed
-        fenetre.blit(self.Img, (self.PosX, self.PosY))
-        if self.PosX <= -32:
-            ListePoubelle.remove(self)
-
-
-class Voiture(object):
-
-    def __init__(self):
-        self.Img = pygame.image.load("Images/Voiture.png").convert_alpha()
-        self.PosY = random.randrange(2)*150+450
-        self.PosX = 1370
-        self.Speed = random.randrange(300)+200
-
-    def BlitAndMove(self, fenetre, TimeElapsed, ListeVoiture, Speed):
-        self.PosX -= (Speed*TimeElapsed+self.Speed*TimeElapsed)
-        fenetre.blit(self.Img, (self.PosX-84, self.PosY-46))
-        if self.PosX <= -168:
-            ListeVoiture.remove(self)
-
-
 class Helico(object):
 
     def __init__(self):

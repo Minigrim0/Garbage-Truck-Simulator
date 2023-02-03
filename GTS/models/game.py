@@ -4,7 +4,7 @@ from GTS.abstracts.runnable import Runnable
 from GTS.models.truck import Truck
 from GTS.models.map import Map
 from GTS.models.managers.trashcan import TrashCanManager
-
+from GTS.models.managers.car import CarManager
 
 class Game(Runnable):
 
@@ -29,6 +29,7 @@ class Game(Runnable):
         self.truck: Truck = None  # The truck pawn
         self.map: Map = None  # The map
         self.trashcan_mgr: TrashCanManager = None  # The trashcan manager
+        self.car_mgr: CarManager = None  # The car manager
 
         self.load()
 
@@ -59,10 +60,12 @@ class Game(Runnable):
         self.map = Map()
         self.map.load()
         self.trashcan_mgr = TrashCanManager.getInstance()
+        self.car_mgr = CarManager.getInstance()
 
     def update(self):
         self.map.update(self.truck.actual_speed, self.screen.elapsed_time)
         self.trashcan_mgr.update(self.screen.elapsed_time, self.truck)
+        self.car_mgr.update(self.screen.elapsed_time, self.truck)
         self.truck.update(self.screen.elapsed_time)
 
         return
@@ -152,6 +155,7 @@ class Game(Runnable):
         self.map.draw(self.screen)
         self.truck.draw(self.screen)
         self.trashcan_mgr.draw(self.screen)
+        self.car_mgr.draw(self.screen)
         return
 
         for Poub in ListePoubelle:
