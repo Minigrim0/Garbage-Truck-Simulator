@@ -44,7 +44,7 @@ class MainMenu(Menu, Runnable):
         self.buttons["quit"].build("Quit", buttons_font, ("CENTER", "CENTER"))
 
     def _build(self):
-        self.gameInstance.options.play_music("frantic-15190")
+        self.gameInstance.options.play_music("frantic-15190", force=True)
 
         self.background.fill((190, 0, 0))
         self._build_buttons()

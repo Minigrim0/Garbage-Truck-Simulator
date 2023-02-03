@@ -27,7 +27,7 @@ class GameOptions:
             raise RuntimeError("Trying to instanciate a second object of a singleton class")
         GameOptions.instance = self
 
-        self.musics = {}
+        self.musics: dict = {}
         self.sounds = {}
         self.fonts = {}
 
@@ -43,7 +43,7 @@ class GameOptions:
     def _load_default_settings(self):
         self.settings = {
             "music": {
-                "on": False,
+                "on": True,
                 "volume": 5
             },
             "effects": {
@@ -73,9 +73,10 @@ class GameOptions:
         except FileNotFoundError:
             self._load_default_settings()
 
-        for music in glob.glob("assets/musics/*.ogg"):
+        for music in glob.glob("assets/music/*.ogg"):
             music_name = os.path.splitext(os.path.split(music)[1])[0]
-            self.musics[music_name] = pg.mixer.Sound(music)
+            self.musics[music_name] = music
+            logger.info(f"Loaded music {music_name}")
 
         pg.mixer.music.set_volume(self["music"]["volume"] / 10)
 
@@ -114,20 +115,21 @@ class GameOptions:
         try:
             if song_name is not None:
                 self["music"]["on"] = True
-                if song_name not in self.musics:
+                if song_name not in self.musics.keys():
                     song_name = random.choice(list(self.musics.keys()))
             else:
                 song_name = random.choice(list(self.musics.keys()))
         except IndexError:
             self["music"]["on"] = False
+            logger.warning(f"music {song_name} not found")
             return
 
         if self["music"]["on"]:
-            if force or not pygame.mixer.music.get_busy():
-                pygame.mixer.music.load(self.musics[song_name])
-                pygame.mixer.music.play()
+            if force or not pg.mixer.music.get_busy():
+                pg.mixer.music.load(self.musics[song_name])
+                pg.mixer.music.play()
 
     def stop_music(self):
         """Stops the current song"""
         self.music_on = False
-        pygame.mixer.music.stop()
+        pg.mixer.music.stop()
