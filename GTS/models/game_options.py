@@ -2,11 +2,13 @@ import pickle
 import glob
 import os
 import random
+import logging
 
 import pygame as pg
 
 from GTS.utils.bound import bound
 
+logger = logging.getLogger("Game Options")
 
 class GameOptions:
     """The options of the ongoing game"""
@@ -26,6 +28,7 @@ class GameOptions:
         GameOptions.instance = self
 
         self.musics = {}
+        self.sounds = {}
         self.fonts = {}
 
         self.settings: dict = {}
@@ -44,7 +47,7 @@ class GameOptions:
                 "volume": 5
             },
             "effects": {
-                "on": False,
+                "on": True,
                 "volume": 5
             },
             "game": {
@@ -73,6 +76,19 @@ class GameOptions:
         for music in glob.glob("assets/musics/*.ogg"):
             music_name = os.path.splitext(os.path.split(music)[1])[0]
             self.musics[music_name] = pg.mixer.Sound(music)
+
+    def load_sound(self, path: str, sound_name: str):
+        """Loads a sound from the assets folder"""
+        if sound_name not in self.sounds.keys():
+            self.sounds[sound_name] = pg.mixer.Sound(path)
+
+    def play_sound(self, sound_name: str):
+        """Plays the given sound"""
+        if self["effects"]["on"]:
+            if sound_name in self.sounds.keys():
+                self.sounds[sound_name].play()
+            else:
+                logger.warning(f"Trying to play a sound that doesn't exist {sound_name}")
 
     def change_volume(self, value):
         """Modifies the volume options, and updates it in pygame (and makes sure it's in its bounds)"""
