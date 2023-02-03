@@ -77,10 +77,13 @@ class GameOptions:
             music_name = os.path.splitext(os.path.split(music)[1])[0]
             self.musics[music_name] = pg.mixer.Sound(music)
 
+        pg.mixer.music.set_volume(self["music"]["volume"] / 10)
+
     def load_sound(self, path: str, sound_name: str):
         """Loads a sound from the assets folder"""
         if sound_name not in self.sounds.keys():
             self.sounds[sound_name] = pg.mixer.Sound(path)
+            self.sounds[sound_name].set_volume(self["effects"]["volume"] / 10)
 
     def play_sound(self, sound_name: str):
         """Plays the given sound"""
@@ -90,11 +93,18 @@ class GameOptions:
             else:
                 logger.warning(f"Trying to play a sound that doesn't exist {sound_name}")
 
-    def change_volume(self, value):
+    def change_music_volume(self, value):
         """Modifies the volume options, and updates it in pygame (and makes sure it's in its bounds)"""
-        self.volume += value
-        self.volume = bound(0, 10, self.volume)
-        pg.mixer.music.set_volume(self.volume / 10)
+        self["music"]["volume"] += value
+        self["music"]["volume"] = bound(0, 10, self.volume)
+        pg.mixer.music.set_volume(self["music"]["volume"] / 10)
+
+    def change_effect_volume(self, value):
+        """Modifies the volume options, and updates it in pygame (and makes sure it's in its bounds)"""
+        self["effects"]["volume"] += value
+        self["effects"]["volume"] = bound(0, 10, self.volume)
+        for sound in self.sounds.values():
+            sound.set_volume(self["effects"]["volume"] / 10)
 
     def play_music(self, song_name: str = None, force: bool = False):
         """Plays the given song"""

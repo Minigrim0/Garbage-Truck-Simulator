@@ -23,6 +23,7 @@ class Truck(object):
         self.nitro = False
         self.nitro_level = 0
         self.nitro_animation: SpriteAnimation = None
+        self.game_instance = GarbageTruckSimulator.getInstance()
         self.ui_font = GarbageTruckSimulator.getInstance().options.fonts["MedievalSharp-xOZ5"]["20"]
         self.nitro_cooldown = 0
         self.nitro_replenish_speed = 5  # per second
@@ -91,7 +92,8 @@ class Truck(object):
         )
         self.nitro_animation.play()
 
-        self.sounds["nitro"] = pg.mixer.Sound("assets/sounds/truck/nitro.ogg")
+        self.game_instance.options.load_sound("assets/sounds/truck/nitro.ogg", "nitro_sound")
+        self.sounds["nitro"] = "nitro_sound"
 
         self.nitro_gauge = Gauge(
             min_angle=-20, max_angle=200, min_value=0, max_value=100,
@@ -172,6 +174,6 @@ class Truck(object):
                 self.steering = Truck.UP
             elif event.key == pg.K_RIGHT:
                 if not self.nitro and self.nitro_cooldown <= 0 and self.nitro_level > 20:
-                    self.sounds["nitro"].play()
+                    self.game_instance.options.play_sound(self.sounds["nitro"])
                     self.nitro_animation.play()
                     self.nitro = True
