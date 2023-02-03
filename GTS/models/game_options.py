@@ -79,11 +79,14 @@ class GameOptions:
 
         pg.mixer.music.set_volume(self["music"]["volume"] / 10)
 
-    def load_sound(self, path: str, sound_name: str):
+    def load_sound(self, path: str, sound_name: str, volume: int = -1):
         """Loads a sound from the assets folder"""
         if sound_name not in self.sounds.keys():
             self.sounds[sound_name] = pg.mixer.Sound(path)
-            self.sounds[sound_name].set_volume(self["effects"]["volume"] / 10)
+            if volume >= 0:
+                self.sounds[sound_name].set_volume(volume / 10)
+            else:
+                self.sounds[sound_name].set_volume(self["effects"]["volume"] / 10)
 
     def play_sound(self, sound_name: str):
         """Plays the given sound"""
