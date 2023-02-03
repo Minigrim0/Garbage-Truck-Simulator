@@ -16,16 +16,16 @@ class TrashCan:
     def heigth(self):
         return self.position[1]
 
+    def _move(self, offset: tuple):
+        self.position = (self.position[0] + offset[0], self.position[1] + offset[1])
+        self.hitbox.move_ip(offset[0], offset[1])
+
     def update(self, time_elapsed: float, truck: Truck) -> bool:
         if truck.hitbox.colliderect(self.hitbox):
             self.alive = False
         elif self.alive:
-            self.move((-truck.actual_speed * time_elapsed, 0))
+            self._move((-truck.actual_speed * time_elapsed, 0))
         return self.alive
-
-    def move(self, offset: tuple):
-        self.position = (self.position[0] + offset[0], self.position[1] + offset[1])
-        self.hitbox.move_ip(offset[0], offset[1])
 
     def draw(self, screen):
         screen.blit(self.image, self.position)
