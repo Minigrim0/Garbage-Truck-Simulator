@@ -31,6 +31,7 @@ class Truck(object):
         self.nitro_multiplier = 2
 
         self.position = (15, 500)
+        self.hitbox: pg.Rect = None
         self.health = 100
         self.max_health = 100
 
@@ -75,6 +76,7 @@ class Truck(object):
     def load(self):
         logging.info("Loading truck")
         self.image = pg.image.load("assets/images/CamionPoubelle.png").convert_alpha()
+        self.hitbox = pg.Rect(self.position, self.image.get_size())
 
         self.health_bar = LoadingBar(
             (0, 0),
@@ -158,6 +160,7 @@ class Truck(object):
                 self.position[0],
                 bound(350, 620, self.position[1] + self.steering_speed * timeElapsed),
             )
+        self.hitbox.update(self.position, self.image.get_size())
 
     def handleEvents(self, event):
         self.steering = Truck.NONE
