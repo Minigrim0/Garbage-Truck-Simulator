@@ -7,11 +7,12 @@ import pygame as pg
 
 from GTS.models.image_bank import ImageBank
 from GTS.models.screen import Screen
+from GTS.interface.components.sprite import Sprite
 
 from GTS.utils.rot_center import rot_center
 
 
-class SpriteAnimation:
+class SpriteAnimation(Sprite):
     """An animation of images"""
 
     def __init__(
@@ -34,14 +35,18 @@ class SpriteAnimation:
             callback_on (list, optional): A frame index that the callback will be called on. Defaults to None.
             initial_data (dict, optional): Data to load the animation from. Defaults to None.
         """
-        self.images: list(pg.Surface) = []
-        self.images_flipped: list(pg.Surface) = []
 
-        self.original_image: pg.Surface = None
-        self.flipped_original_image: pg.Surface = None
+        super().__init__(
+            flippable=flippable,
+            flipped=False,
+            position=position,
+            rotation=rotation,
+            drawing_offset=None
+        )
 
-        self.flippable: bool = flippable
-        self.flipped = False
+        self.images_rect: list(pg.Surface) = []
+        self.images_flipped_rect: list(pg.Surface) = []
+
         self.last_step: int = 0  # The time since last step
 
         self.step: int = 0
@@ -127,11 +132,11 @@ class SpriteAnimation:
         )
         for y in range(cut_size[1]):
             for x in range(cut_size[0]):
-                self.images.append(
+                self.images_rect.append(
                     pg.Rect((x * rect_size[0], y * rect_size[1]), rect_size)
                 )
                 if self.flippable:
-                    self.images_flipped.append(
+                    self.images_flipped_rect.append(
                         pg.Rect(
                             (self.original_image.get_size()[0] - rect_size[0] - (x * rect_size[0]), y * rect_size[1]),
                             rect_size
@@ -141,16 +146,16 @@ class SpriteAnimation:
     def _loadFormat(self, image_format: str, image_size: tuple = (-1, -1), rotation: int = 0):
         """Loads images in a folder following a certain format (Ex: *.png)"""
         for image in sorted(glob.glob(image_format)):
-            self.images.append(
+            self.images_rect.append(
                 pg.image.load(image).convert_alpha()
             )
 
             if image_size != (-1, -1):
-                self.images[-1] = pg.transform.scale(self.images[-1], image_size)
+                self.images_rect[-1] = pg.transform.scale(self.images_rect[-1], image_size)
 
             if self.flippable:
-                self.images_flipped.append(
-                    pg.transform.flip(self.images[-1], True, False)
+                self.images_flipped_rect.append(
+                    pg.transform.flip(self.images_rect[-1], True, False)
                 )
 
     def _loadDict(self, data: dict, image_size: tuple = (-1, -1), rotation: int = 0):
@@ -171,14 +176,14 @@ class SpriteAnimation:
             bank.set(
                 bank_name,
                 (
-                    self.images, self.images_flipped, self.multipart,
+                    self.images_rect, self.images_flipped_rect, self.multipart,
                     self.original_image, self.flipped_original_image
                 )
             )
 
     def _loadBank(self, bank: ImageBank, bank_name: str, rotation: int = 0):
         """Loads an animation set from the image bank"""
-        self.images, self.images_flipped, self.multipart, self.original_image, self.flipped_original_image = bank[
+        self.images_rect, self.images_flipped_rect, self.multipart, self.original_image, self.flipped_original_image = bank[
             bank_name
         ]
 
@@ -207,7 +212,7 @@ class SpriteAnimation:
         self.step += 1
         if self.step in self.callback_on:
             self.trigger()
-        if self.step == len(self.images):
+        if self.step == len(self.images_rect):
             if -1 in self.callback_on and self.trigger is not None:
                 self.trigger()
             self._endLoop()
@@ -215,7 +220,7 @@ class SpriteAnimation:
     def _endLoop(self):
         """Bit of code executed at each loop's end"""
         self.current_loop += 1
-        self.step %= len(self.images)
+        self.step %= len(self.images_rect)
         if self.current_loop >= self.loop and self.loop > 0:
             self.reset()
 
@@ -265,12 +270,12 @@ class SpriteAnimation:
     def currentFrame(self):
         """Returns the animation's current frame"""
         if self.flipped:
-            return self.images_flipped[self.step]
-        return self.images[self.step]
+            return self.images_flipped_rect[self.step]
+        return self.images_rect[self.step]
 
     def getFrame(self, index: int = 0) -> pg.Surface:
         """Returns a frame of the animation, ensures the result to be a pygame Surface"""
-        frame = self.images_flipped[index] if self.flipped else self.images[index]
+        frame = self.images_flipped_rect[index] if self.flipped else self.images_rect[index]
         if isinstance(frame, pg.Rect):
             if self.flipped:
                 return self.flipped_original_image.subsurface(frame)
