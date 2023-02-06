@@ -6,6 +6,8 @@ from GTS.animations.movement_animation import MovementAnimation
 
 
 class Component:
+    """This class represents an element that can be placed in the world"""
+
     def __init__(self,
         name: str,
         image: pg.Surface,
@@ -20,10 +22,10 @@ class Component:
         self.image_animation: ImageAnimation = None
 
     def update(self):
-        pass
+        raise NotImplementedError("Not implemented")
 
     def draw(self, screen: pg.Surface):
-        pass
+        raise NotImplementedError("Not implemented")
 
     def set_animation_speed(self, speed: int):
         self.animation_speed = speed
