@@ -24,7 +24,7 @@ class Truck(object):
         self.nitro_level = 0
         self.nitro_animation: SpriteAnimation = None
         self.game_instance = GarbageTruckSimulator.getInstance()
-        self.ui_font = GarbageTruckSimulator.getInstance().options.fonts["MedievalSharp-xOZ5"]["20"]
+        self.ui_font = self.game_instance.options.fonts["MedievalSharp-xOZ5"]["20"]
         self.nitro_cooldown = 0
         self.nitro_replenish_speed = 5  # per second
         self.nitro_consumption_speed = 20  # per second

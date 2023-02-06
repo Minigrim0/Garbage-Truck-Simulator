@@ -26,7 +26,7 @@ class TrashCanManager:
 
     def __init__(self):
         if TrashCanManager.instance is not None:
-            raise Exception("This class is a singleton!")
+            raise RuntimeError("This class is a singleton!")
         TrashCanManager.instance = self
 
         self.trashcans: list = []

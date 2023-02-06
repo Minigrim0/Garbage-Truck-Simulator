@@ -19,7 +19,7 @@ class Game(Runnable):
 
     def __init__(self, screen):
         if Game.instance is not None:
-            raise Exception("This class is a singleton!")
+            raise RuntimeError("This class is a singleton!")
         Game.instance = self
 
         self.objective = 5000  # The distance to travel
